@@ -1,0 +1,14 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - run: pip install -q yt-dlp
+      - name: list
+        run: yt-dlp --flat-playlist --playlist-end 3 --print "%(id)s %(title).50s" https://www.youtube.com/channel/UCGFSabv9q5VBpmGFcNCZW6w/videos
+      - name: meta
+        run: yt-dlp --skip-download --print "%(upload_date)s|%(live_status)s" https://www.youtube.com/watch?v=9iydrn3Z9NA
+      - name: subs
+        run: yt-dlp --skip-download --write-auto-subs --sub-langs ru --sub-format vtt -o "sub_%(id)s" https://www.youtube.com/watch?v=9iydrn3Z9NA && ls -la sub_* && head -c 400 sub_*.vtt
